@@ -1,16 +1,21 @@
 import "../styles/globals.css";
+import { SessionProvider } from "next-auth/react";
 import { ChakraProvider } from "@chakra-ui/react";
 
-import theme from "../theme/theme";
-import Layout from "../components/Layout";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en.json";
 
-function MyApp({ Component, pageProps }) {
+import theme from "../theme/theme";
+
+TimeAgo.addDefaultLocale(en);
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  const getLayout = Component.getLayout || ((page) => page);
   return (
-    <ChakraProvider theme={theme}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </ChakraProvider>
+    <SessionProvider session={session}>
+      <ChakraProvider theme={theme}>
+        {getLayout(<Component {...pageProps} />)}
+      </ChakraProvider>
+    </SessionProvider>
   );
 }
 
